@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,4 +26,19 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function userRole()
+    {
+        return $this->hasOne(UserRole::class, 'user_id', 'id');
+    }
+
+    public function isAdmin()
+    {
+        return $this->userRole->role_name == Role::ADMIN;
+    }
+
+    public function results()
+    {
+        return $this->hasMany(TestResult::class, 'user_id', 'id');
+    }
 }

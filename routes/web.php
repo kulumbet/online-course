@@ -11,10 +11,20 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('/', 'LectionController', ['only' => ['index', 'show']]);
+Route::resource('/lections', 'LectionController', ['only' => ['index', 'show']]);
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/statistics', 'StatisticsController@index');
+    Route::post('/statistics', 'StatisticsController@index');
+    Route::resource('tests', 'TestController');
+
+    Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+        Route::get('/', 'Admin\MainController@index');
+        Route::resource('lections', 'Admin\LectionController');
+        Route::resource('tests', 'Admin\TestController');
+        Route::get('tests/add/{id}', 'Admin\TestController@index');
+    });
+});
